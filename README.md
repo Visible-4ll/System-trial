@@ -1,42 +1,68 @@
-# docker-linux-codeigniter-mysql
-Docker with Linux, CodeIgniter MySQL set up
+/project_name/$project_name/" docker-compose.yml
+/projectname/$project_name/" docker-compose.yml
+/laravel_app/$project_name/" docker-compose.yml
+/test_name_db/test_$project_name/" sql_scripts/create_test_db.sql
 
-Steps for executing :
+# Nginx port
+/80:80/$nginx_port:80/" docker-compose.yml
+/port: 80/port: $nginx_port/" vite.config.js
 
-1. After downloading/cloning the repository, open the docker-compose.yml file in the and change the following parameters.
+# PHP port
+/9000:9000/$php_port:9000/" docker-compose.yml
+fi
 
-	**db_data directory will store the MySQL data**
-	
-	**ciapp directory has the CodeIgniter 3.1 source code**
-   
-   For services => db & services => ciapp, change the path of the volumes directory according to your set up.
+# Mysql port
+/3306:3306/$mysql_port:3306/" docker-compose.yml
 
+# Redis port
+/6379:6379/$redis_port:6379/" docker-compose.yml
 
-2. Change the MySQL environment variables in docker-compose.yml file if required.
-
-
-3. Open the terminal and go to the directory where docker-compose.yml is located and run the below command :
-
-   		docker-compose up -d --build
-
-4. Step 3 will download the all the dependencies, install it and set up the docker container. After running the command in step 3, it would start two containers. One for MySQL and another for ciapp. It would also create the ciapp database in MySQL.
-
-
-5. Run the below command to get the list of running containers :
-
-		docker ps
-
-6. After running above steps successfully, open the browser and run the below url :
-
-		http://localhost:8000/
-			
-   The default CodeIgniter landing page would be display which shows that everything is setup perfectly.
+# Vite port
+/port: 5173/port: $vite_port/" vite.config.js
+/port: 5173/port: $vite_port/" vite_vue.config.js
 
 
+# INSTALL LARAVEL ######################################################################################################
+  
+  docker-compose run composer create-project --prefer-dist laravel/laravel .
+  docker-compose run composer composer require predis/predis
 
+  # Update the .env file
+  localhost/localhost:$nginx_port/" .env
+  DB_DATABASE=laravel/DB_DATABASE=$project_name/" .env
+  DB_HOST=127.0.0.1/DB_HOST=mysql/" .env
+  DB_PASSWORD=/DB_PASSWORD=secret456/" .env
+  REDIS_HOST=127.0.0.1/d" .env
+  REDIS_PASSWORD=null/d" .env
+  REDIS_PORT=6379/d" .env
 
-8. References :
+  # Copy the changed config .
+  stubs/config/database.php config/database.php
 
-	1. https://codeigniter.com/
-	2. https://hub.docker.com/_/php/
-	3. https://docs.docker.com/
+  # Install some assets
+          Vue
+              docker-compose run npm i @vitejs/plugin-vue
+              #Transfer files
+              stubs/vite_vue.config.js vite.config.js
+              stubs/app_vue.js resources/js/app.js
+              stubs/App.vue resources/js/App.vue
+              stubs/vite.blade.php resources/views/vite.blade.php
+              break
+              ;;
+         Tailwind
+              docker-compose run npm install -D tailwindcss postcss autoprefixer
+              #Transfer files
+              stubs/vite_vue.config.js vite.config.js
+              stubs/app_vue.js resources/js/app.js
+              stubs/tailwind.css resources/css/app.css
+              stubs/tailwind.config.js tailwind.config.js
+              stubs/postcss.config.js postcss.config.js
+              stubs/App.vue resources/js/App.vue
+
+              # Copy example over welcome.blade.php
+              cp resources/views/welcome.blade.php resources/views/welcome.blade.php.bak
+              stubs/vite_tailwind.blade.php resources/views/welcome.blade.php
+
+              # Compile assets
+              docker-compose -f ../docker-compose.yml run --publish $vite_port:$vite_port npm run build
+
